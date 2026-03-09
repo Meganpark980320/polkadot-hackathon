@@ -11,17 +11,12 @@
 
 - GitHub repository upload completed
 - Deployer wallet generated locally
-- Faucet funding not completed yet
+- Faucet funding completed
+- Polkadot Hub TestNet deployment completed
+- Live demo vault seeded
 
-## Faucet note
+## Deployment result
 
-Official faucet:
-- `https://faucet.polkadot.io/`
-
-Current issue:
-- faucet request requires Google reCAPTCHA token
-- this environment can load the site but cannot solve the captcha automatically
-
-## Next step
-
-Open the faucet page in a browser, request PAS for the generated address, then continue with Polkadot Hub TestNet deployment.
+- Contract: `0x3Dc5041c113844030162005a6827ad06308d2c66`
+- Chain: `Polkadot Hub TestNet`
+- Demo vault: `Vault #1`
