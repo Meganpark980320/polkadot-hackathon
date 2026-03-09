@@ -29,7 +29,7 @@ PATH=/home/traverse/hackathon/.tools/node/bin:$PATH npm run seed -- --network <n
 
 ## Polkadot Hub TestNet 기준값
 
-- RPC: `https://testnet-passet-hub-eth-rpc.polkadot.io`
+- RPC: `https://services.polkadothub-rpc.com/testnet`
 - Chain ID: `420420417`
 - Explorer: `https://blockscout-passet-hub.parity-testnet.parity.io/`
 - 테스트넷 가스 토큰: `PAS`
@@ -46,6 +46,9 @@ PATH=/home/traverse/hackathon/.tools/node/bin:$PATH npm run seed -- --network <n
 - `address=0x...`
 
 이 주소를 프론트 `.env`의 `VITE_CLUBVAULT_ADDRESS`로 넣으면 된다.
+
+실배포 주소:
+- `0x3Dc5041c113844030162005a6827ad06308d2c66`
 
 ## seedDemo.js
 
@@ -67,9 +70,15 @@ PATH=/home/traverse/hackathon/.tools/node/bin:$PATH npm run seed -- --network <n
 3. seed script를 돌릴지, 수동으로 생성할지 결정
 4. 브라우저에서 연결 지갑과 승인용 지갑 준비
 
+현재 상태:
+- `Vault #1` 생성 완료
+- balance 입금 완료
+- proposal 2개 생성 완료
+- 그 중 1개는 `Executed`, 1개는 `Pending`
+
 ## 남은 일
 
-- 최종 제출 네트워크용 Hardhat network config 추가
+- `@parity/hardhat-polkadot` / resolc 툴체인 마이그레이션 검토
 - explorer URL 패턴 확정
 - receipt 링크를 프론트에 붙이기
-- funded `PRIVATE_KEY` 확보 후 공개 테스트넷 배포 재시도
+- 제출 포털 업로드
