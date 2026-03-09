@@ -1,0 +1,31 @@
+{
+  "name": "clubvault",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "ClubVault hackathon project",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "compile": "hardhat compile",
+    "test": "hardhat test",
+    "deploy": "hardhat run scripts/deploy.js",
+    "seed": "hardhat run scripts/seedDemo.js"
+  },
+  "dependencies": {
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "viem": "^2.31.7"
+  },
+  "devDependencies": {
+    "@nomicfoundation/hardhat-ethers": "^4.0.1",
+    "@nomicfoundation/hardhat-toolbox-mocha-ethers": "^3.0.3",
+    "@vitejs/plugin-react-swc": "^3.11.0",
+    "chai": "^6.2.2",
+    "ethers": "^6.15.0",
+    "hardhat": "^3.0.7",
+    "mocha": "^11.7.4",
+    "vite": "^7.1.7"
+  }
+}
