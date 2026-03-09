@@ -68,5 +68,6 @@ STATUS: IN PROGRESS
 
 - `@parity/hardhat-polkadot@0.2.7` 는 Hardhat `^2.26.0`을 요구하지만 현재 프로젝트는 Hardhat 3 기반이다. PolkaVM/resolc 전환 전에 툴체인 마이그레이션이 필요하다.
 - Polkadot Hub TestNet 공개 배포는 PAS가 들어 있는 `PRIVATE_KEY`가 현재 환경에 없어 수행 불가하다.
-- GitHub 저장소는 공개 상태로 확인됐지만, 현재 환경의 git에 `git-remote-https`가 없어 원격 push가 불가하다.
+- GitHub 저장소는 공개 상태로 확인됐고 코드 업로드도 완료했다. 남은 것은 해커톤 제출 포털 제출이다.
+- 새 deployer 주소는 생성했지만 faucet가 Google reCAPTCHA를 요구해서 이 환경에서 자동 PAS 수령은 불가하다.
 - 제출 포털 접근 정보가 없어 최종 제출은 현재 환경에서 수행 불가하다.
