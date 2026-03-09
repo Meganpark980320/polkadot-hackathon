@@ -24,6 +24,15 @@ Core flow:
 - Vite frontend build passing
 - Frontend live read/write flow implemented
 - AI-assisted proposal draft flow implemented
+- Polkadot Hub TestNet deployment completed
+
+## Deployed contract
+
+- Network: `Polkadot Hub TestNet`
+- RPC: `https://services.polkadothub-rpc.com/testnet`
+- Contract: `0x3Dc5041c113844030162005a6827ad06308d2c66`
+- Explorer: `https://blockscout-passet-hub.parity-testnet.parity.io/address/0x3Dc5041c113844030162005a6827ad06308d2c66`
+- Demo vault: `Vault #1`
 
 ## Repo structure
 
@@ -74,10 +83,10 @@ See `.env.example` for the expected keys.
 
 ## Next build steps
 
-1. Deploy to the final Polkadot-compatible EVM target
-2. Add receipt / explorer links in the UI
-3. Add event-driven refresh instead of manual reload
-4. Tighten proposal validation and empty-state polish
+1. Migrate the toolchain to the Polkadot-specific `@parity/hardhat-polkadot` path if submission rules require resolc artifacts
+2. Add event-driven refresh instead of manual reload
+3. Tighten proposal validation and empty-state polish
+4. Submit through the hackathon portal
 
 ## Local commands
 
