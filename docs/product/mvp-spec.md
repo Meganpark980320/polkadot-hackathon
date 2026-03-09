@@ -1,7 +1,7 @@
 # ClubVault MVP 명세
 
 - 작성일: 2026-03-09
-- 기준 문서: [clubvault-product-brief.md](./clubvault-product-brief.md)
+- 기준 문서: [product-brief.md](./product-brief.md)
 
 ## 목표
 

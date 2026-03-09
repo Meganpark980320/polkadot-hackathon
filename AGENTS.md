@@ -42,6 +42,6 @@ ClubVault - 학생/동아리/팀용 공동지갑 + 승인형 지출 관리 dApp 
 
 ## 참고 문서
 
-- `polkadot-hackathon-ideas.md` - 아이디어 상세
-- `polkadot-solidity-roadmap.md` - 전체 로드맵
-- `polkadot-solidity-hackathon-research.md` - 해커톤 조사
+- `docs/research/polkadot-hackathon-ideas.md` - 아이디어 상세
+- `docs/research/polkadot-solidity-roadmap.md` - 전체 로드맵
+- `docs/research/polkadot-solidity-hackathon-research.md` - 해커톤 조사

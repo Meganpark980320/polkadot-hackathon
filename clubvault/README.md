@@ -45,11 +45,11 @@ Core flow:
 
 ## Architecture
 
-See [../clubvault-architecture.md](../clubvault-architecture.md) for the Mermaid diagram and the component-level overview.
+See [../docs/engineering/architecture.md](../docs/engineering/architecture.md) for the Mermaid diagram and the component-level overview.
 
 ## Freeze Status
 
-See [../clubvault-feature-freeze.md](../clubvault-feature-freeze.md) for the locked submission scope and the allowed changes after feature freeze.
+See [../docs/submission/feature-freeze.md](../docs/submission/feature-freeze.md) for the locked submission scope and the allowed changes after feature freeze.
 
 ## MVP rules
 
@@ -80,6 +80,14 @@ See [../clubvault-feature-freeze.md](../clubvault-feature-freeze.md) for the loc
 - `VITE_POLKADOT_HUB_NETWORK_LABEL`: expected network label, defaults to `Polkadot Hub TestNet`
 
 See `.env.example` for the expected keys.
+
+## Project docs
+
+- Product brief: [../docs/product/product-brief.md](../docs/product/product-brief.md)
+- MVP spec: [../docs/product/mvp-spec.md](../docs/product/mvp-spec.md)
+- Frontend spec: [../docs/product/frontend-spec.md](../docs/product/frontend-spec.md)
+- Deploy notes: [../docs/submission/deploy-notes.md](../docs/submission/deploy-notes.md)
+- Submission description: [../docs/submission/submission-description.md](../docs/submission/submission-description.md)
 
 ## Next build steps
 

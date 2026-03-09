@@ -34,6 +34,9 @@ const initialProposalForm = {
 };
 
 function App() {
+  const isRecordingMode =
+    typeof window !== "undefined" &&
+    new URLSearchParams(window.location.search).get("recording") === "1";
   const contractAddress = import.meta.env.VITE_CLUBVAULT_ADDRESS || "";
   const nativeSymbol = import.meta.env.VITE_NATIVE_SYMBOL || "DOT";
   const explorerTxBaseUrl = import.meta.env.VITE_EXPLORER_TX_BASE_URL || "";
@@ -41,42 +44,54 @@ function App() {
   const expectedNetworkLabel = import.meta.env.VITE_POLKADOT_HUB_NETWORK_LABEL || "Polkadot Hub TestNet";
   const configuredVaultId = parseVaultId(import.meta.env.VITE_CLUBVAULT_VAULT_ID);
   const isLiveConfigured = Boolean(contractAddress);
+  const recordingWalletAddress = "0xeED225d6260071C273eae194052416A0a44620b7";
+  const recordingPrompt = `Pay the demo editor 0.30 ${nativeSymbol} for the final submission video.`;
 
-  const [walletAddress, setWalletAddress] = useState("");
-  const [activeChainId, setActiveChainId] = useState(null);
+  const [walletAddress, setWalletAddress] = useState(isRecordingMode ? recordingWalletAddress : "");
+  const [activeChainId, setActiveChainId] = useState(isRecordingMode ? expectedChainId : null);
   const [isConnecting, setIsConnecting] = useState(false);
   const [isSyncing, setIsSyncing] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [vaultId, setVaultId] = useState(configuredVaultId);
+  const [vaultId, setVaultId] = useState(isRecordingMode ? null : configuredVaultId);
   const [lastTxHash, setLastTxHash] = useState("");
   const [statusText, setStatusText] = useState(
-    isLiveConfigured
+    isRecordingMode
+      ? "Recording mode active. Demo interactions update local state for capture."
+      : isLiveConfigured
       ? "Live mode configured. Connect wallet to load the latest vault."
       : "Demo mode active. Set VITE_CLUBVAULT_ADDRESS to enable onchain actions."
   );
-  const [vault, setVault] = useState(() => createDemoVault(nativeSymbol));
-  const [proposals, setProposals] = useState(() => createDemoProposals(nativeSymbol));
-  const [prompt, setPrompt] = useState("Buy snacks for the team during demo prep, budget 30 DOT.");
+  const [vault, setVault] = useState(() =>
+    isRecordingMode ? createEmptyVault(nativeSymbol) : createDemoVault(nativeSymbol)
+  );
+  const [proposals, setProposals] = useState(() =>
+    isRecordingMode ? [] : createDemoProposals(nativeSymbol)
+  );
+  const [prompt, setPrompt] = useState(
+    isRecordingMode ? recordingPrompt : `Buy snacks for the team during demo prep, budget 30 ${nativeSymbol}.`
+  );
   const [draft, setDraft] = useState(initialDraft);
   const [vaultForm, setVaultForm] = useState(initialVaultForm);
   const [depositAmount, setDepositAmount] = useState("");
   const [proposalForm, setProposalForm] = useState(initialProposalForm);
 
   const modeLabel = useMemo(() => {
+    if (isRecordingMode) return "Recording mode";
     if (!isLiveConfigured) return "Demo mode";
     if (!walletAddress) return "Live mode configured";
     return "Live mode connected";
-  }, [isLiveConfigured, walletAddress]);
+  }, [isLiveConfigured, isRecordingMode, walletAddress]);
 
   const activeVaultLabel = vaultId == null ? "No active vault" : `Vault #${vaultId.toString()}`;
   const isOnExpectedNetwork = activeChainId == null || activeChainId === expectedChainId;
-  const canUseLiveActions = isLiveConfigured && Boolean(walletAddress) && isOnExpectedNetwork;
+  const canUseLiveActions =
+    (isRecordingMode || isLiveConfigured) && Boolean(walletAddress) && isOnExpectedNetwork;
   const actionDisabled = !canUseLiveActions || isSubmitting;
 
   useEffect(() => {
     let active = true;
 
-    if (!hasBrowserWallet()) {
+    if (isRecordingMode || !hasBrowserWallet()) {
       return () => {
         active = false;
       };
@@ -120,25 +135,29 @@ function App() {
       window.ethereum.removeListener?.("chainChanged", handleChainChanged);
       window.ethereum.removeListener?.("accountsChanged", handleAccountsChanged);
     };
-  }, []);
+  }, [expectedChainId, isRecordingMode]);
 
   useEffect(() => {
-    if (!isLiveConfigured || !walletAddress || !isOnExpectedNetwork) {
+    if (isRecordingMode || !isLiveConfigured || !walletAddress || !isOnExpectedNetwork) {
       return;
     }
 
     refreshLiveData();
-  }, [contractAddress, isLiveConfigured, isOnExpectedNetwork, walletAddress]);
+  }, [contractAddress, isLiveConfigured, isOnExpectedNetwork, isRecordingMode, walletAddress]);
 
   useEffect(() => {
-    if (!walletAddress || isOnExpectedNetwork) {
+    if (isRecordingMode || !walletAddress || isOnExpectedNetwork) {
       return;
     }
 
     setStatusText(`Wallet is connected to the wrong network. Switch to ${expectedNetworkLabel}.`);
-  }, [expectedNetworkLabel, isOnExpectedNetwork, walletAddress]);
+  }, [expectedNetworkLabel, isOnExpectedNetwork, isRecordingMode, walletAddress]);
 
   async function refreshLiveData(requestedVaultId = vaultId) {
+    if (isRecordingMode) {
+      setStatusText("Recording mode keeps state locally for the screen capture.");
+      return;
+    }
     if (!isLiveConfigured) {
       return;
     }
@@ -200,6 +219,13 @@ function App() {
   }
 
   async function handleConnectWallet() {
+    if (isRecordingMode) {
+      setWalletAddress(recordingWalletAddress);
+      setActiveChainId(expectedChainId);
+      setStatusText("Demo wallet connected for recording.");
+      return;
+    }
+
     if (!hasBrowserWallet()) {
       setStatusText("No browser wallet detected. Staying in demo mode.");
       return;
@@ -233,6 +259,23 @@ function App() {
       members = parseMemberList(vaultForm.members);
     } catch (error) {
       setStatusText(humanizeError(error));
+      return;
+    }
+
+    if (isRecordingMode) {
+      const memberCount = members.length + 1;
+      const thresholdCount = getMajorityThreshold(memberCount);
+      setVaultId(1n);
+      setVault({
+        name,
+        balance: formatTokenAmount(0, nativeSymbol),
+        memberCount,
+        threshold: `${thresholdCount} / ${memberCount} approvals`,
+        thresholdCount
+      });
+      setProposals([]);
+      setVaultForm(initialVaultForm);
+      setStatusText("Vault created in recording mode.");
       return;
     }
 
@@ -273,6 +316,24 @@ function App() {
     }
     if (!depositAmount.trim()) {
       setStatusText("Deposit amount is required.");
+      return;
+    }
+
+    if (isRecordingMode) {
+      const amountValue = parseTokenAmount(depositAmount);
+      if (!(amountValue > 0)) {
+        setStatusText("Deposit amount must be greater than zero.");
+        return;
+      }
+      setVault((current) => {
+        const nextBalance = parseTokenAmount(current.balance) + amountValue;
+        return {
+          ...current,
+          balance: formatTokenAmount(nextBalance, nativeSymbol)
+        };
+      });
+      setDepositAmount("");
+      setStatusText("Deposit confirmed in recording mode.");
       return;
     }
 
@@ -322,6 +383,35 @@ function App() {
       return;
     }
 
+    if (isRecordingMode) {
+      const amountValue = parseTokenAmount(proposalForm.amount);
+      if (!(amountValue > 0)) {
+        setStatusText("Proposal amount must be greater than zero.");
+        return;
+      }
+      const nextProposalId = proposals.length + 1;
+      const thresholdCount = vault.thresholdCount || 1;
+      const nextProposal = {
+        id: nextProposalId,
+        title: proposalForm.title.trim(),
+        description: proposalForm.description.trim(),
+        amount: formatTokenAmount(amountValue, nativeSymbol),
+        amountValue: `${amountValue}`,
+        proposer: shortenAddress(walletAddress),
+        proposerAddress: walletAddress,
+        recipient: shortenAddress(proposalForm.recipient.trim()),
+        recipientAddress: proposalForm.recipient.trim(),
+        approvals: `0 / ${thresholdCount}`,
+        approvalCount: 0,
+        status: "Pending",
+        canExecute: false
+      };
+      setProposals((current) => [nextProposal, ...current]);
+      setProposalForm(initialProposalForm);
+      setStatusText(`Proposal #${nextProposalId} created in recording mode.`);
+      return;
+    }
+
     try {
       setIsSubmitting(true);
       setStatusText("Create proposal: awaiting wallet signature...");
@@ -355,6 +445,32 @@ function App() {
       return;
     }
 
+    if (isRecordingMode) {
+      setProposals((current) =>
+        current.map((proposal) => {
+          if (proposal.id !== proposalId) {
+            return proposal;
+          }
+
+          const nextApprovalCount = Math.min(
+            (proposal.approvalCount || 0) + 1,
+            vault.thresholdCount || 1
+          );
+          const canExecute = nextApprovalCount >= (vault.thresholdCount || 1);
+
+          return {
+            ...proposal,
+            approvalCount: nextApprovalCount,
+            approvals: `${nextApprovalCount} / ${vault.thresholdCount || 1}`,
+            status: canExecute ? "Ready to execute" : "Pending",
+            canExecute
+          };
+        })
+      );
+      setStatusText(`Proposal #${proposalId} approved in recording mode.`);
+      return;
+    }
+
     try {
       setIsSubmitting(true);
       setStatusText("Approve proposal: awaiting wallet signature...");
@@ -380,6 +496,38 @@ function App() {
 
   async function handleExecuteProposal(proposalId) {
     if (!guardLiveAction()) {
+      return;
+    }
+
+    if (isRecordingMode) {
+      const proposal = proposals.find((row) => row.id === proposalId);
+      if (!proposal || !proposal.canExecute) {
+        setStatusText("Proposal is not ready to execute yet.");
+        return;
+      }
+
+      setVault((current) => {
+        const nextBalance = Math.max(
+          0,
+          parseTokenAmount(current.balance) - parseTokenAmount(proposal.amount)
+        );
+        return {
+          ...current,
+          balance: formatTokenAmount(nextBalance, nativeSymbol)
+        };
+      });
+      setProposals((current) =>
+        current.map((row) =>
+          row.id === proposalId
+            ? {
+                ...row,
+                status: "Executed",
+                canExecute: false
+              }
+            : row
+        )
+      );
+      setStatusText(`Proposal #${proposalId} executed in recording mode.`);
       return;
     }
 
@@ -411,6 +559,22 @@ function App() {
       return;
     }
 
+    if (isRecordingMode) {
+      setProposals((current) =>
+        current.map((row) =>
+          row.id === proposalId
+            ? {
+                ...row,
+                status: "Cancelled",
+                canExecute: false
+              }
+            : row
+        )
+      );
+      setStatusText(`Proposal #${proposalId} cancelled in recording mode.`);
+      return;
+    }
+
     try {
       setIsSubmitting(true);
       setStatusText("Cancel proposal: awaiting wallet signature...");
@@ -435,6 +599,9 @@ function App() {
   }
 
   function guardLiveAction() {
+    if (isRecordingMode) {
+      return true;
+    }
     if (!isLiveConfigured) {
       setStatusText("Set VITE_CLUBVAULT_ADDRESS to enable live actions.");
       return false;
@@ -503,7 +670,7 @@ function App() {
             <div className="cta-row">
               <button
                 className="primary-btn"
-                disabled={!isLiveConfigured || isSyncing}
+                disabled={(!isLiveConfigured && !isRecordingMode) || isSyncing}
                 onClick={() => refreshLiveData()}
                 type="button"
               >
@@ -547,6 +714,7 @@ function App() {
                   setVaultForm((current) => ({ ...current, name: event.target.value }))
                 }
                 placeholder="Hackathon Team Vault"
+                data-testid="vault-name-input"
               />
             </label>
             <label className="field field-span">
@@ -559,11 +727,18 @@ function App() {
                   setVaultForm((current) => ({ ...current, members: event.target.value }))
                 }
                 placeholder="One address per line or comma separated"
+                data-testid="vault-members-input"
               />
             </label>
           </div>
           <div className="inline-actions">
-            <button className="primary-btn" disabled={actionDisabled} onClick={handleCreateVault} type="button">
+            <button
+              className="primary-btn"
+              data-testid="create-vault-button"
+              disabled={actionDisabled}
+              onClick={handleCreateVault}
+              type="button"
+            >
               Create Vault
             </button>
           </div>
@@ -578,8 +753,15 @@ function App() {
               value={depositAmount}
               onChange={(event) => setDepositAmount(event.target.value)}
               placeholder="0.25"
+              data-testid="deposit-input"
             />
-            <button className="secondary-btn" disabled={actionDisabled || vaultId == null} onClick={handleDeposit} type="button">
+            <button
+              className="secondary-btn"
+              data-testid="deposit-button"
+              disabled={actionDisabled || vaultId == null}
+              onClick={handleDeposit}
+              type="button"
+            >
               Deposit
             </button>
           </div>
@@ -597,12 +779,13 @@ function App() {
             rows="4"
             value={prompt}
             onChange={(event) => setPrompt(event.target.value)}
+            data-testid="prompt-input"
           />
           <div className="inline-actions">
-            <button className="primary-btn" onClick={handleGenerateDraft} type="button">
+            <button className="primary-btn" data-testid="generate-draft-button" onClick={handleGenerateDraft} type="button">
               Generate Draft
             </button>
-            <button className="secondary-btn" onClick={handleUseDraft} type="button">
+            <button className="secondary-btn" data-testid="use-draft-button" onClick={handleUseDraft} type="button">
               Use Draft
             </button>
             <button className="secondary-btn" onClick={() => setDraft(initialDraft)} type="button">
@@ -639,6 +822,7 @@ function App() {
                 setProposalForm((current) => ({ ...current, recipient: event.target.value }))
               }
               placeholder="0x..."
+              data-testid="proposal-recipient-input"
             />
           </label>
           <label className="field">
@@ -650,6 +834,7 @@ function App() {
                 setProposalForm((current) => ({ ...current, amount: event.target.value }))
               }
               placeholder="0.50"
+              data-testid="proposal-amount-input"
             />
           </label>
           <label className="field">
@@ -661,6 +846,7 @@ function App() {
                 setProposalForm((current) => ({ ...current, title: event.target.value }))
               }
               placeholder="Snacks budget"
+              data-testid="proposal-title-input"
             />
           </label>
           <label className="field field-span">
@@ -673,11 +859,18 @@ function App() {
                 setProposalForm((current) => ({ ...current, description: event.target.value }))
               }
               placeholder="Why the team should spend this amount"
+              data-testid="proposal-description-input"
             />
           </label>
         </div>
         <div className="inline-actions">
-          <button className="primary-btn" disabled={actionDisabled || vaultId == null} onClick={handleCreateProposal} type="button">
+          <button
+            className="primary-btn"
+            data-testid="create-proposal-button"
+            disabled={actionDisabled || vaultId == null}
+            onClick={handleCreateProposal}
+            type="button"
+          >
             Create Proposal
           </button>
           <button
@@ -726,6 +919,7 @@ function App() {
                     <div className="inline-actions">
                       <button
                         className="secondary-btn"
+                        data-testid={`approve-button-${proposal.id}`}
                         disabled={
                           actionDisabled ||
                           proposal.status === "Executed" ||
@@ -738,6 +932,7 @@ function App() {
                       </button>
                       <button
                         className="primary-btn"
+                        data-testid={`execute-button-${proposal.id}`}
                         disabled={actionDisabled || !proposal.canExecute}
                         onClick={() => handleExecuteProposal(proposal.id)}
                         type="button"
@@ -746,6 +941,7 @@ function App() {
                       </button>
                       <button
                         className="secondary-btn"
+                        data-testid={`cancel-button-${proposal.id}`}
                         disabled={!canCancel || isSubmitting}
                         onClick={() => handleCancelProposal(proposal.id)}
                         type="button"
@@ -815,6 +1011,25 @@ function createEmptyVault(nativeSymbol) {
     threshold: "-",
     thresholdCount: 0
   };
+}
+
+function getMajorityThreshold(memberCount) {
+  return Math.floor(memberCount / 2) + 1;
+}
+
+function parseTokenAmount(value) {
+  const sanitized = `${value}`.replace(/[^0-9.]/g, "");
+  const parsed = Number.parseFloat(sanitized);
+  return Number.isFinite(parsed) ? parsed : 0;
+}
+
+function formatTokenAmount(value, nativeSymbol) {
+  return `${trimDecimals(value)} ${nativeSymbol}`;
+}
+
+function trimDecimals(value) {
+  const normalized = typeof value === "number" ? value.toFixed(2) : `${value}`;
+  return normalized.replace(/\.00$/, "").replace(/(\.\d*[1-9])0+$/, "$1");
 }
 
 function parseVaultId(value) {

@@ -1,8 +1,8 @@
 # ClubVault Frontend Spec
 
 - 작성일: 2026-03-09
-- 기준 문서: [clubvault-product-brief.md](./clubvault-product-brief.md)
-- 구현 경로: [clubvault/src/App.jsx](./clubvault/src/App.jsx)
+- 기준 문서: [product-brief.md](./product-brief.md)
+- 구현 경로: [../../clubvault/src/App.jsx](../../clubvault/src/App.jsx)
 
 ## 목표
 

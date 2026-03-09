@@ -1,3 +1,13 @@
 .tools
 .secrets.env
 *.log
+deliverables/
+.recording-frames/
+.recording-frames-3min/
+.recording-frames-3min-final/
+.recordings/
+.voiceover-build/
+.venv-tts/
+.venv-video/
+__pycache__/
+*.pyc

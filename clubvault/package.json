@@ -11,7 +11,9 @@
     "compile": "hardhat compile",
     "test": "hardhat test",
     "deploy": "hardhat run scripts/deploy.js",
-    "seed": "hardhat run scripts/seedDemo.js"
+    "seed": "hardhat run scripts/seedDemo.js",
+    "record:video": "node scripts/recordScreenDemo.mjs",
+    "record:video:3min": "node scripts/recordScreenDemo3min.mjs"
   },
   "dependencies": {
     "react": "^19.1.0",
@@ -21,11 +23,13 @@
   "devDependencies": {
     "@nomicfoundation/hardhat-ethers": "^4.0.1",
     "@nomicfoundation/hardhat-toolbox-mocha-ethers": "^3.0.3",
+    "@sparticuz/chromium": "^143.0.4",
     "@vitejs/plugin-react-swc": "^3.11.0",
     "chai": "^6.2.2",
     "ethers": "^6.15.0",
     "hardhat": "^3.0.7",
     "mocha": "^11.7.4",
+    "playwright": "^1.54.2",
     "vite": "^7.1.7"
   }
 }

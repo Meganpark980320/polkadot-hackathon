@@ -14,19 +14,19 @@
 
 ### 오늘 만든 파일
 
-- [polkadot-hackathon-ideas.md](./polkadot-hackathon-ideas.md)
-- [polkadot-solidity-roadmap.md](./polkadot-solidity-roadmap.md)
-- [clubvault-product-brief.md](./clubvault-product-brief.md)
-- [clubvault-mvp-spec.md](./clubvault-mvp-spec.md)
-- [clubvault-contract-review.md](./clubvault-contract-review.md)
-- [clubvault-test-plan.md](./clubvault-test-plan.md)
-- [clubvault-frontend-spec.md](./clubvault-frontend-spec.md)
-- [clubvault-demo-script.md](./clubvault-demo-script.md)
-- [clubvault-deploy-notes.md](./clubvault-deploy-notes.md)
-- [clubvault/README.md](./clubvault/README.md)
-- [clubvault/contracts/ClubVault.sol](./clubvault/contracts/ClubVault.sol)
-- [clubvault/scripts/deploy.js](./clubvault/scripts/deploy.js)
-- [clubvault/scripts/seedDemo.js](./clubvault/scripts/seedDemo.js)
+- [../research/polkadot-hackathon-ideas.md](../research/polkadot-hackathon-ideas.md)
+- [../research/polkadot-solidity-roadmap.md](../research/polkadot-solidity-roadmap.md)
+- [../product/product-brief.md](../product/product-brief.md)
+- [../product/mvp-spec.md](../product/mvp-spec.md)
+- [contract-review.md](./contract-review.md)
+- [test-plan.md](./test-plan.md)
+- [../product/frontend-spec.md](../product/frontend-spec.md)
+- [../submission/demo-script.md](../submission/demo-script.md)
+- [../submission/deploy-notes.md](../submission/deploy-notes.md)
+- [../../clubvault/README.md](../../clubvault/README.md)
+- [../../clubvault/contracts/ClubVault.sol](../../clubvault/contracts/ClubVault.sol)
+- [../../clubvault/scripts/deploy.js](../../clubvault/scripts/deploy.js)
+- [../../clubvault/scripts/seedDemo.js](../../clubvault/scripts/seedDemo.js)
 
 ### 현재 상태
 
