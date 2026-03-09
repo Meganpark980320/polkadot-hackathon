@@ -50,7 +50,7 @@ STATUS: IN PROGRESS
 - [x] task-24: README.md 작성 완료 (구조, 플로우, 환경변수, 실행방법)
 - [x] task-25: 아키텍처 다이어그램 1장 (mermaid 또는 이미지)
 - [x] task-26: 배포 스크립트 작성 (scripts/deploy.js)
-- [ ] task-27: Polkadot Hub 테스트넷 배포 + hardhat.config.js에 네트워크 설정 추가 + 배포 주소 README 기록
+- [x] task-27: Polkadot Hub 테스트넷 배포 + hardhat.config.js에 네트워크 설정 추가 + 배포 주소 README 기록
 - [x] task-28: 데모용 시드 데이터 스크립트 (scripts/seedDemo.js)
 
 ## Phase 8: 기능 동결 + 제출 준비 (3/17-20)
@@ -66,8 +66,5 @@ STATUS: IN PROGRESS
 
 ## Blockers
 
-- `@parity/hardhat-polkadot@0.2.7` 는 Hardhat `^2.26.0`을 요구하지만 현재 프로젝트는 Hardhat 3 기반이다. PolkaVM/resolc 전환 전에 툴체인 마이그레이션이 필요하다.
-- Polkadot Hub TestNet 공개 배포는 PAS가 들어 있는 `PRIVATE_KEY`가 현재 환경에 없어 수행 불가하다.
 - GitHub 저장소는 공개 상태로 확인됐고 코드 업로드도 완료했다. 남은 것은 해커톤 제출 포털 제출이다.
-- 새 deployer 주소는 생성했지만 faucet가 Google reCAPTCHA를 요구해서 이 환경에서 자동 PAS 수령은 불가하다.
 - 제출 포털 접근 정보가 없어 최종 제출은 현재 환경에서 수행 불가하다.
