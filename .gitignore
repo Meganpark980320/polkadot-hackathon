@@ -1,0 +1,3 @@
+.tools
+.secrets.env
+*.log
